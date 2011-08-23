@@ -6,6 +6,10 @@ RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 def test_define_deck():
     deck = Deck()
     eq_(52, len(set(deck.cards))) # kill 2 birds: assert len && ensure no dupes
+    eq_(13, len(filter(lambda card: card[1] == SUITS[0], deck.cards)))
+    eq_(13, len(filter(lambda card: card[1] == SUITS[1], deck.cards)))
+    eq_(13, len(filter(lambda card: card[1] == SUITS[2], deck.cards)))
+    eq_(13, len(filter(lambda card: card[1] == SUITS[3], deck.cards)))
 
 class Deck():
     def __init__(self):
