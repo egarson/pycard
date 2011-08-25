@@ -11,8 +11,14 @@ RANKS = [ACE, 2, 3, 4, 5, 6, 7, 8, 9, 10, JACK, QUEEN, KING]
 Ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack','Queen', 'King']
 ranks_chars = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', '♛', '♚']
 
+class CardException(Exception): pass
+
 class Card():
     def __init__(self,suit,rank):
+        if not suit in SUITS:
+            raise CardException('Bad suit "%s"' % suit)
+        if not rank in RANKS:
+            raise CardException('Bad rank "%s"' % rank)
         self.suit, self.rank = suit, rank
 
     def __str__(self):

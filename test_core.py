@@ -17,3 +17,10 @@ def test_deck_order():
     eq_((3,13), (deck.cards[len(deck)-1].suit, deck.cards[len(deck)-1].rank))
     eq_((3,13), (deck.last_card.suit, deck.last_card.rank))
 
+@raises(CardException)
+def test_card_bad_suit():
+    Card('rubbish', ACE)
+
+@raises(CardException)
+def test_card_bad_rank():
+    Card(SPADES, 'blah')
