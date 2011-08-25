@@ -19,8 +19,13 @@ def test_deck_order():
 
 @raises(CardException)
 def test_card_bad_suit():
-    Card('rubbish', ACE)
+    Card('rubbish', 'Ace')
 
 @raises(CardException)
 def test_card_bad_rank():
-    Card(SPADES, 'blah')
+    Card('Spades', 'blah')
+
+def test_card_kwargs():
+    Card(suit='Spades', rank='Ace')
+    Card(rank='Jack', suit='Clubs')
+
