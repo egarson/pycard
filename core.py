@@ -15,11 +15,21 @@ class CardException(Exception): pass
 
 class Card():
     def __init__(self,rank,suit):
-        if not rank in Ranks:
+        if rank in Ranks:
+            rank = RANKS[Ranks.index(rank)]
+        elif rank in ranks_chars:
+            rank = RANKS[ranks_chars.index(rank)-1]
+        else:
             raise CardException('Bad rank "%s"' % rank)
-        if not suit in Suits:
+
+        if suit in Suits:
+            suit = SUITS[Suits.index(suit)]
+        elif suit in suits_chars:
+            suit = SUITS[suits_chars.index(suit)]
+        else:
             raise CardException('Bad suit "%s"' % suit)
-        self.rank, self.suit = RANKS[Ranks.index(rank)], SUITS[Suits.index(suit)]
+
+        self.rank, self.suit = rank, suit
 
     def __str__(self):
         return '%s of %s' % (Ranks[self.rank-1],Suits[self.suit])
