@@ -11,11 +11,11 @@ def test_define_deck():
 
 def test_deck_order():
     deck = Deck()
-    eq_('Ace of Clubs', str(deck.cards[0])) # lowest card tests
-    eq_((ACE,CLUBS), (deck.cards[0].rank, deck.cards[0].suit)) # yuk
-    eq_((ACE,CLUBS), (deck.first_card.rank, deck.first_card.suit)) # ok, better
-    eq_('King of Spades', str(deck.cards[len(deck)-1])) # highest card tests
-    eq_((KING,SPADES), (deck.cards[len(deck)-1].rank, deck.cards[len(deck)-1].suit))
+    eq_('Ace of Clubs', str(deck[0])) # lowest card accessors
+    eq_((ACE,CLUBS), (deck[0].rank, deck[0].suit))
+    eq_((ACE,CLUBS), (deck.first_card.rank, deck.first_card.suit))
+    eq_('King of Spades', str(deck[len(deck)-1])) # highest card accessors
+    eq_((KING,SPADES), (deck[len(deck)-1].rank, deck[len(deck)-1].suit))
     eq_((KING,SPADES), (deck.last_card.rank, deck.last_card.suit))
 
 def test_card_rank():
@@ -108,3 +108,5 @@ def test_all_cards_greater_than():
 def test_all_cards_less_than():
     smallest_card = lambda card,other: card if card < other else other
     eq_(Card('Ace', 'Clubs'), reduce(smallest_card, Deck().cards))
+
+

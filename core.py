@@ -37,9 +37,6 @@ class Card():
     def __hash__(self):
         return 19 * self.rank + 17 * self.suit
 
-    def __eq__(self, other):
-        return self.suit == other.suit and self.rank == other.rank
-
     def __cmp__(self, other):
         if self.suit > other.suit:
             return 1
@@ -61,3 +58,5 @@ class Deck():
     def __len__(self):
         return len(self.cards)
 
+    def __getitem__(self,index):
+        return self.cards[index]
