@@ -109,4 +109,15 @@ def test_all_cards_less_than():
     smallest_card = lambda card,other: card if card < other else other
     eq_(Card('Ace', 'Clubs'), reduce(smallest_card, Deck().cards))
 
+def test_shuffle():
+    d1,d2 = Deck(),Deck()
+    is_zero = lambda x: True if x == 0 else False
+    compare = lambda card,other: cmp(card,other)
+    # Expected: a 52-element array of zeros [0,0,0...] when doing a
+    # pair-wise comparison of d1 with d2 prior to shuffle
+    eq_(52, len(filter(is_zero, map(compare, d1.cards, d2.cards))))
+    d1.shuffle()
+    # d1.shuffle will yield same order 1 in 8*10^67 test runs (source:
+    # http://en.wikipedia.org/wiki/Shuffling) - lol, i can live with this
+    ok_(52 != len(filter(is_zero, map(compare, d1.cards, d2.cards))))
 

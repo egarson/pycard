@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from nose.tools import *
+from random import shuffle
 
 ACE, JACK, QUEEN, KING = 1, 11, 12, 13 # sic
 RANKS = [ACE, 2, 3, 4, 5, 6, 7, 8, 9, 10, JACK, QUEEN, KING]
@@ -60,3 +61,6 @@ class Deck():
 
     def __getitem__(self,index):
         return self.cards[index]
+
+    def shuffle(self):
+        shuffle(self.cards)
