@@ -18,7 +18,7 @@ class Card():
         if rank in Ranks:
             rank = RANKS[Ranks.index(rank)]
         elif rank in ranks_chars:
-            rank = RANKS[ranks_chars.index(rank)-1]
+            rank = RANKS[ranks_chars.index(rank)]
         else:
             raise CardException('Bad rank "%s"' % rank)
 
