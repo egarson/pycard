@@ -34,6 +34,24 @@ class Card():
     def __str__(self):
         return '%s of %s' % (Ranks[self.rank-1],Suits[self.suit])
 
+    def __hash__(self):
+        return 19 * self.rank + 17 * self.suit
+
+    def __eq__(self, other):
+        return self.suit == other.suit and self.rank == other.rank
+
+    def __cmp__(self, other):
+        if self.suit > other.suit:
+            return 1
+        elif self.suit < other.suit:
+            return -1
+        elif self.rank > other.rank:
+            return 1
+        elif self.rank < other.rank:
+            return -1
+        else:
+            return 0 # rank and suit are same
+
 class Deck():
     def __init__(self):
         self.cards = [Card(rank,suit) for rank in Ranks for suit in Suits]
