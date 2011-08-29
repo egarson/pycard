@@ -13,10 +13,10 @@ def test_deck_order():
     deck = Deck()
     eq_('Ace of Clubs', str(deck[0])) # lowest card accessors
     eq_((ACE,CLUBS), (deck[0].rank, deck[0].suit))
-    eq_((ACE,CLUBS), (deck.first_card.rank, deck.first_card.suit))
+    eq_((ACE,CLUBS), (deck.top_card().rank, deck.top_card().suit))
     eq_('King of Spades', str(deck[len(deck)-1])) # highest card accessors
     eq_((KING,SPADES), (deck[len(deck)-1].rank, deck[len(deck)-1].suit))
-    eq_((KING,SPADES), (deck.last_card.rank, deck.last_card.suit))
+    eq_((KING,SPADES), (deck.bottom_card().rank, deck.bottom_card().suit))
 
 def test_card_rank():
     c = Card(rank='2', suit='Diamonds')
@@ -123,17 +123,17 @@ def test_shuffle():
 
 def test_take_one():
     d = Deck()
-    first_card = d.first_card
+    top_card = d.top_card()
     taken = d.take(1)
     ok_(51, len(d.cards))
-    eq_(first_card, taken[0])
+    eq_(top_card, taken[0])
 
 def test_take_two():
     d = Deck()
-    first_card = d.first_card
+    top_card = d.top_card()
     taken = d.take(2)
     ok_(50, len(d.cards))
-    eq_(first_card, taken[0])
+    eq_(top_card, taken[0])
 
 def test_deal():
     d = Deck()
@@ -141,4 +141,10 @@ def test_deal():
     hands = d.deal(hands=5,cards=5)
     ok_(len(hands) == 5)
     eq_(52 - 5 * 5, len(d.cards))
+
+def test_deal_no_shuffle():
+    d = Deck()
+    hand = d.deal(1,1,shuffle=False)
+    eq_(hand[0][0], Card('Ace','Clubs'))
+    eq_(d.top_card(), Card('Ace', 'Diamonds'))
 

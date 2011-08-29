@@ -50,12 +50,23 @@ class Card():
         else:
             return 0 # rank and suit are same
 
+class Hand():
+    def __init__(self, cards):
+        self.cards = cards
+
+    def __getitem__(self,index):
+        return self.cards[index]
+
 class Deck():
     def __init__(self):
         # TODO try replacing w/itertools.product for fun
         self.cards = [Card(rank,suit) for rank in Ranks for suit in Suits]
-        self.__dict__['first_card'] = self.cards[0]
-        self.__dict__['last_card'] = self.cards[len(self)-1]
+
+    def top_card(self):
+        return self.cards[0]
+
+    def bottom_card(self):
+        return self.cards[len(self)-1]
 
     def __len__(self):
         return len(self.cards)
@@ -68,9 +79,9 @@ class Deck():
         self.cards[:count] = []
         return result
 
-    def deal(self, hands, cards):
-        self.shuffle()
-        return [self.take(cards) for r in range(hands)]
+    def deal(self, hands, cards, shuffle=True):
+        self.shuffle() if shuffle else False # don't burden clients
+        return [Hand(self.take(cards)) for r in range(hands)]
 
     def shuffle(self):
         shuffle(self.cards)
