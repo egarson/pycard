@@ -121,3 +121,24 @@ def test_shuffle():
     # http://en.wikipedia.org/wiki/Shuffling) - lol, i can live with this
     ok_(52 != len(filter(is_zero, map(compare, d1.cards, d2.cards))))
 
+def test_take_one():
+    d = Deck()
+    first_card = d.first_card
+    taken = d.take(1)
+    ok_(51, len(d.cards))
+    eq_(first_card, taken[0])
+
+def test_take_two():
+    d = Deck()
+    first_card = d.first_card
+    taken = d.take(2)
+    ok_(50, len(d.cards))
+    eq_(first_card, taken[0])
+
+def test_deal():
+    d = Deck()
+    original_cards = list(d.cards)
+    hands = d.deal(hands=5,cards=5)
+    ok_(len(hands) == 5)
+    eq_(52 - 5 * 5, len(d.cards))
+

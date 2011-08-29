@@ -17,16 +17,16 @@ class CardException(Exception): pass
 class Card():
     def __init__(self,rank,suit):
         if rank in Ranks:
-            rank = RANKS[Ranks.index(rank)]
+            rank = RANKS[Ranks.index(rank)] # eg 'Ace'
         elif rank in ranks_chars:
-            rank = RANKS[ranks_chars.index(rank)]
+            rank = RANKS[ranks_chars.index(rank)] # eg 'A'
         else:
             raise CardException('Bad rank "%s"' % rank)
 
         if suit in Suits:
-            suit = SUITS[Suits.index(suit)]
+            suit = SUITS[Suits.index(suit)] # eg 'Clubs'
         elif suit in suits_chars:
-            suit = SUITS[suits_chars.index(suit)]
+            suit = SUITS[suits_chars.index(suit)] # eg '♣'
         else:
             raise CardException('Bad suit "%s"' % suit)
 
@@ -52,6 +52,7 @@ class Card():
 
 class Deck():
     def __init__(self):
+        # TODO try replacing w/itertools.product for fun
         self.cards = [Card(rank,suit) for rank in Ranks for suit in Suits]
         self.__dict__['first_card'] = self.cards[0]
         self.__dict__['last_card'] = self.cards[len(self)-1]
@@ -61,6 +62,15 @@ class Deck():
 
     def __getitem__(self,index):
         return self.cards[index]
+
+    def take(self, count):
+        result = self.cards[:count]
+        self.cards[:count] = []
+        return result
+
+    def deal(self, hands, cards):
+        self.shuffle()
+        return [self.take(cards) for r in range(hands)]
 
     def shuffle(self):
         shuffle(self.cards)
