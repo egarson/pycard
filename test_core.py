@@ -148,3 +148,7 @@ def test_deal_no_shuffle():
     eq_(hand[0][0], Card('Ace','Clubs'))
     eq_(d.top_card(), Card('Ace', 'Diamonds'))
 
+def test_hand_str():
+    d = Deck()
+    hand = d.deal(1,4,shuffle=False)
+    eq_(str(hand[0]), "['AC', 'AD', 'AH', 'AS']")

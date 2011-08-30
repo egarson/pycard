@@ -10,7 +10,7 @@ ranks_chars = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', '♛', '�
 CLUBS, DIAMONDS, HEARTS, SPADES = 0, 1, 2, 3
 SUITS = [CLUBS, DIAMONDS, HEARTS, SPADES]
 Suits = ['Clubs', 'Diamonds', 'Hearts', 'Spades']
-suits_chars = ['♣', '♦', '♥', '♠']
+suits_symbols = ['♣', '♦', '♥', '♠']
 
 class CardException(Exception): pass
 
@@ -25,8 +25,8 @@ class Card():
 
         if suit in Suits:
             suit = SUITS[Suits.index(suit)] # eg 'Clubs'
-        elif suit in suits_chars:
-            suit = SUITS[suits_chars.index(suit)] # eg '♣'
+        elif suit in suits_symbols:
+            suit = SUITS[suits_symbols.index(suit)] # eg '♣'
         else:
             raise CardException('Bad suit "%s"' % suit)
 
@@ -57,9 +57,12 @@ class Hand():
     def __getitem__(self,index):
         return self.cards[index]
 
+    def __str__(self):
+        card_str = lambda c: '%s%s' % (Ranks[c.rank-1][:1], Suits[c.suit][:1])
+        return str(map(card_str, self.cards))
+
 class Deck():
     def __init__(self):
-        # TODO try replacing w/itertools.product for fun
         self.cards = [Card(rank,suit) for rank in Ranks for suit in Suits]
 
     def top_card(self):
