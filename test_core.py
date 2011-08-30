@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from core import *
 
@@ -29,17 +30,22 @@ def test_card_rank_low():
     eq_(CLUBS, c.suit)
 
 def test_card_rank_high():
-    c = Card('♚','♠')
+    c = Card(u'♚', u'♠')
     eq_(KING, c.rank)
     eq_(SPADES, c.suit)
 
 def test_card_char_constructor():
-    c = Card(rank='J', suit='♦') # Jack of Diamonds
+    c = Card(rank='J', suit=u'♦') # Jack of Diamonds
     eq_(JACK, c.rank)
+    eq_(DIAMONDS, c.suit)
 
 def test_card_kwargs():
-    Card(suit='Spades', rank='Ace')
-    Card(rank='Jack', suit='Clubs')
+    c1 = Card(suit='Spades', rank='Ace')
+    eq_(ACE, c1.rank)
+    eq_(SPADES, c1.suit)
+    c2 = Card(rank='Jack', suit='Clubs')
+    eq_(JACK, c2.rank)
+    eq_(CLUBS, c2.suit)
 
 @raises(CardException)
 def test_card_bad_rank():
@@ -117,7 +123,7 @@ def test_shuffle():
     # pair-wise comparison of d1 with d2 prior to shuffle
     eq_(52, len(filter(is_zero, map(compare, d1.cards, d2.cards))))
     d1.shuffle()
-    # d1.shuffle will yield same order 1 in 8*10^67 test runs (source:
+    # d1.shuffle will return same order 1 in 8*10^67 test runs (source:
     # http://en.wikipedia.org/wiki/Shuffling) - lol, i can live with this
     ok_(52 != len(filter(is_zero, map(compare, d1.cards, d2.cards))))
 
@@ -144,11 +150,29 @@ def test_deal():
 
 def test_deal_no_shuffle():
     d = Deck()
-    hand = d.deal(1,1,shuffle=False)
-    eq_(hand[0][0], Card('Ace','Clubs'))
+    [hand] = d.deal(1,1,shuffle=False)
+    eq_(hand[0], Card('Ace','Clubs'))
     eq_(d.top_card(), Card('Ace', 'Diamonds'))
 
 def test_hand_str():
     d = Deck()
-    hand = d.deal(1,4,shuffle=False)
-    eq_(str(hand[0]), "['AC', 'AD', 'AH', 'AS']")
+    [hand] = d.deal(1,4,shuffle=False)
+    eq_(str(hand), "[AC AD AH AS]")
+
+def test_hand_unicode():
+    d = Deck()
+    [hand] = d.deal(1,4,shuffle=False)
+    u1 = unicode(hand)
+    u2 = u"[A♣, A♦, A♥, A♠]"
+    eq_(u1, u2)
+
+def test_hand_len():
+    d = Deck()
+    [hand] = d.deal(1,4,shuffle=False)
+    eq_(4, len(hand))
+
+def test_hand_ranking():
+    winning_hand = Hand([Card('Ace', 'Spades'), Card('Ace', 'Hearts')])
+    losing_hand =  Hand([Card('Ace', 'Diamonds'), Card('2', 'Spades')])
+    ok_(winning_hand > losing_hand)
+
