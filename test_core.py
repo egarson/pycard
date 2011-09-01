@@ -192,7 +192,9 @@ def test_three_of_kind_category():
     three_of_kind = Hand([Card('A♠'), Card('A♥'), Card('9♠'), Card('A♦')])
     eq_(THREE_OF_KIND, PokerEvaluator.category(three_of_kind))
 
-
+def test_four_of_kind_category():
+    four_of_kind = Hand([Card('A♠'), Card('A♥'), Card('A♣'), Card('A♦')])
+    eq_(FOUR_OF_KIND, PokerEvaluator.category(four_of_kind))
 
 # TODO add test to construct all possible Product(Cards)
 

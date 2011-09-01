@@ -60,7 +60,8 @@ class Card():
             return 1 if self.rank > other.rank else -1
         return 0
 
-HIGH_CARDS, ONE_PAIR, TWO_PAIRS, THREE_OF_KIND, FOUR_OF_KIND = 0, 1, 2, 3, 4
+HIGH_CARDS, ONE_PAIR, TWO_PAIRS, THREE_OF_KIND, STRAIGHT, \
+FLUSH, FULL_HOUSE, FOUR_OF_KIND, STRAIGHT_FLUSH = 0, 1, 2, 3, 4, 5, 6, 7, 8
 
 class PokerEvaluator():
 
@@ -77,10 +78,12 @@ class PokerEvaluator():
         if high_card_count == 1:
             return HIGH_CARDS
         elif high_card_count == 2:
-            # return the count of pairs, which coincides with category value
+            # return ONE_ or TWO_ pairs, the count of which coincides with category value
             return reduce(lambda x,y: x+1 if y==2 else x, card_count_map.values(), 0)
         elif high_card_count == 3:
             return THREE_OF_KIND
+        elif high_card_count == 4:
+            return FOUR_OF_KIND
 
 class Hand():
     def __init__(self, cards):
