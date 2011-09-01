@@ -184,5 +184,9 @@ def test_high_cards_category():
 def test_one_pair_category():
     eq_(ONE_PAIR, PokerEvaluator.category(Hand([Card('A♠'), Card('A♥')])))
 
+def test_two_pairs_category():
+    two_pairs = Hand([Card('A♠'), Card('A♥'), Card('3♠'), Card('3♥')])
+    eq_(TWO_PAIRS, PokerEvaluator.category(two_pairs))
+
 # TODO add test to construct all possible Product(Cards)
 
