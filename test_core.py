@@ -19,33 +19,25 @@ def test_deck_order():
     eq_((KING,SPADES), (deck[len(deck)-1].rank, deck[len(deck)-1].suit))
     eq_((KING,SPADES), (deck.bottom_card().rank, deck.bottom_card().suit))
 
-def test_card_rank():
-    c = Card(rank='2', suit='Diamonds')
+def test_card_basics():
+    c = Card('2', 'Diamonds')
     eq_(2, c.rank)
-    eq_(SUITS[DIAMONDS], c.suit)
+    eq_(DIAMONDS, c.suit)
 
 def test_card_rank_low():
-    c = Card(rank='Ace', suit='Clubs')
+    c = Card('Ace', 'Clubs')
     eq_(ACE, c.rank)
     eq_(CLUBS, c.suit)
 
 def test_card_rank_high():
-    c = Card(u'♚', u'♠')
+    c = Card('♚', '♠')
     eq_(KING, c.rank)
     eq_(SPADES, c.suit)
 
-def test_card_char_constructor():
-    c = Card(rank='J', suit=u'♦') # Jack of Diamonds
+def test_card_shortcut_constructor():
+    c = Card('J♦')
     eq_(JACK, c.rank)
     eq_(DIAMONDS, c.suit)
-
-def test_card_kwargs():
-    c1 = Card(suit='Spades', rank='Ace')
-    eq_(ACE, c1.rank)
-    eq_(SPADES, c1.suit)
-    c2 = Card(rank='Jack', suit='Clubs')
-    eq_(JACK, c2.rank)
-    eq_(CLUBS, c2.suit)
 
 @raises(CardException)
 def test_card_bad_rank():
@@ -53,7 +45,7 @@ def test_card_bad_rank():
 
 @raises(CardException)
 def test_card_bad_rank_char():
-    Card(suit='♥', rank='blah')
+    Card('♥', 'blah')
 
 @raises(CardException)
 def test_card_bad_suit():
@@ -61,7 +53,7 @@ def test_card_bad_suit():
 
 @raises(CardException)
 def test_card_bad_suit_char():
-    Card(rank='A', suit='X')
+    Card('A', 'X')
 
 def test_compare_suits_basic():
     # default Spades > Hearts > Diamonds > Clubs

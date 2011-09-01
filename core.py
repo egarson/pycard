@@ -17,22 +17,29 @@ suits_symbols = [u'♣', u'♦', u'♥', u'♠']
 class CardException(Exception): pass
 
 class Card():
-    def __init__(self,rank,suit):
-        if rank in Ranks:
-            rank = RANKS[Ranks.index(rank)] # eg 'King'
-        elif rank in ranks_chars:
-            rank = RANKS[ranks_chars.index(rank)] # eg u'♚'
+    def __init__(self, *args):
+        if len(args) == 2: # eg Card('Ace', 'Spades')
+            rank, suit = unicode(args[0], 'utf8'), unicode(args[1], 'utf8')
+            self.rank, self.suit = self.parse_rank(rank), self.parse_suit(suit)
+        elif len(args) == 1:  # eg Card('A♦')
+            uni = unicode(args[0], 'utf8')
+            self.rank, self.suit = self.parse_rank(uni[:1]), self.parse_suit(uni[1:])
         else:
-            raise CardException('Bad rank "%s"' % rank)
+            raise TypeError('Unsupported constructor argument(s): %s' % args)
 
-        if suit in Suits:
-            suit = SUITS[Suits.index(suit)] # eg 'Clubs'
-        elif suit in suits_symbols:
-            suit = SUITS[suits_symbols.index(suit)] # eg u'♣'
+    def __parse__(self, arg, Arr, ARR, chars):
+        if arg in Arr:
+            return ARR[Arr.index(arg)] # eg 'King', 'Clubs'
+        elif arg in chars:
+            return ARR[chars.index(arg)] # eg u'♚', u'♣'
         else:
-            raise CardException('Bad suit "%s"' % suit)
+            raise CardException('Bad rank or suit: "%s"' % unicode(arg))
 
-        self.rank, self.suit = rank, suit
+    def parse_rank(self, rank):
+        return self.__parse__(rank, Ranks, RANKS, ranks_chars)
+
+    def parse_suit(self, suit):
+        return self.__parse__(suit, Suits, SUITS, suits_symbols)
 
     def __str__(self):
         return '%s of %s' % (Ranks[self.rank-1], Suits[self.suit])
