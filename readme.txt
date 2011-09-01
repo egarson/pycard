@@ -8,3 +8,5 @@ RANKS is 1-based, because 'A,2,3...' has no '1'; this way, we are contiguous at 
 Hmmm, would like to offer "...J,Q,K" in ranks_chars in addition to pretty symbols
 deal() calls shuffle() so clients don't have to (or even to know that they 'must')
 deal() cheats in terms of actual dealing convention/etiquette/rules, but i allow it
+clients can dynamically rebind evaluate to adjust for game semantics; PokerEvaluator can also be subclassed
+hit up irc for unicode printing annoyance

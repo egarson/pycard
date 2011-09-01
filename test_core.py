@@ -30,7 +30,7 @@ def test_card_rank_low():
     eq_(CLUBS, c.suit)
 
 def test_card_rank_high():
-    c = Card('♚', '♠')
+    c = Card('King', '♠')
     eq_(KING, c.rank)
     eq_(SPADES, c.suit)
 
@@ -38,6 +38,12 @@ def test_card_shortcut_constructor():
     c = Card('J♦')
     eq_(JACK, c.rank)
     eq_(DIAMONDS, c.suit)
+    c2 = Card('10♥') # test 2-char rank
+    eq_(10, c2.rank)
+    eq_(HEARTS, c2.suit)
+    c3 = Card(' 6♦ ') # test strip
+    eq_(6, c3.rank)
+    eq_(DIAMONDS, c3.suit)
 
 @raises(CardException)
 def test_card_bad_rank():
@@ -163,8 +169,20 @@ def test_hand_len():
     [hand] = d.deal(1,4,shuffle=False)
     eq_(4, len(hand))
 
-def test_hand_ranking():
-    winning_hand = Hand([Card('Ace', 'Spades'), Card('Ace', 'Hearts')])
-    losing_hand =  Hand([Card('Ace', 'Diamonds'), Card('2', 'Spades')])
-    ok_(winning_hand > losing_hand)
+def test_create_hand_with_new_card_constructor():
+    hand = Hand([Card('A♠'), Card('A♦'), Card('A♥')])
+    eq_(3, len(hand))
+
+def test_highest_count():
+    card_count_map = {4:10, 5:8}
+    eq_(4, max(card_count_map, key=lambda e: card_count_map[e]))
+    eq_(10, card_count_map[4]) # sanity check, get value from 'retrieved' key
+
+def test_high_cards_category():
+    eq_(HIGH_CARDS, PokerEvaluator.category(Hand([Card('3♠'), Card('4♥')])))
+
+def test_one_pair_category():
+    eq_(ONE_PAIR, PokerEvaluator.category(Hand([Card('A♠'), Card('A♥')])))
+
+# TODO add test to construct all possible Product(Cards)
 

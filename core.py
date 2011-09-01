@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from nose.tools import *
 from random import shuffle
+from collections import Counter
 
 ACE, JACK, QUEEN, KING = 1, 11, 12, 13 # sic
 RANKS = [ACE, 2, 3, 4, 5, 6, 7, 8, 9, 10, JACK, QUEEN, KING]
@@ -19,11 +20,13 @@ class CardException(Exception): pass
 class Card():
     def __init__(self, *args):
         if len(args) == 2: # eg Card('Ace', 'Spades')
-            rank, suit = unicode(args[0], 'utf8'), unicode(args[1], 'utf8')
+            [rank, suit] = map(lambda a: unicode(a.strip(), 'utf8'), args)
             self.rank, self.suit = self.parse_rank(rank), self.parse_suit(suit)
         elif len(args) == 1:  # eg Card('A♦')
-            uni = unicode(args[0], 'utf8')
-            self.rank, self.suit = self.parse_rank(uni[:1]), self.parse_suit(uni[1:])
+            uni = unicode(args[0].strip(), 'utf8')
+            rank_len = 1 if uni[:2] != '10' else 2 # cater to oddball 2-char rank '10'
+            self.rank = self.parse_rank(uni[:rank_len])
+            self.suit = self.parse_suit(uni[rank_len:])
         else:
             raise TypeError('Unsupported constructor argument(s): %s' % args)
 
@@ -31,7 +34,7 @@ class Card():
         if arg in Arr:
             return ARR[Arr.index(arg)] # eg 'King', 'Clubs'
         elif arg in chars:
-            return ARR[chars.index(arg)] # eg u'♚', u'♣'
+            return ARR[chars.index(arg)] # eg '♚', '♣'
         else:
             raise CardException('Bad rank or suit: "%s"' % unicode(arg))
 
@@ -51,16 +54,30 @@ class Card():
         return 19 * self.rank + 17 * self.suit
 
     def __cmp__(self, other):
-        if self.suit > other.suit:
-            return 1
-        elif self.suit < other.suit:
-            return -1
-        elif self.rank > other.rank:
-            return 1
-        elif self.rank < other.rank:
-            return -1
-        else:
-            return 0 # rank and suit are same
+        if self.suit != other.suit:
+            return 1 if self.suit > other.suit else -1
+        elif self.rank != other.rank:
+            return 1 if self.rank > other.rank else -1
+        return 0
+
+HIGH_CARDS, ONE_PAIR, TWO_PAIRS, THREE_OF_KIND, FOUR_OF_KIND = 0, 1, 2, 3, 4
+
+class PokerEvaluator():
+
+    @classmethod
+    def evaluate(self, hand, other):
+        return cmp(self.category(hand), self.category(other))
+
+    @classmethod
+    def category(self, hand):
+        # eg {ACE:2, 4:1} = Counter([A♠ 4♦ A♥])
+        card_count_map = Counter([card.rank for card in hand.cards])
+        card_with_highest_count = max(card_count_map, key=lambda e: card_count_map[e])
+        high_card_count = card_count_map[card_with_highest_count]
+        if high_card_count == 1:
+            return HIGH_CARDS
+        elif high_card_count == 2:
+            return ONE_PAIR
 
 class Hand():
     def __init__(self, cards):
@@ -77,11 +94,10 @@ class Hand():
         return len(self.cards)
 
     def __unicode__(self):
-        # had to hit irc up for this one...
         return u"[%s]" % u", ".join(unicode(card) for card in self.cards)
 
     def __cmp__(self, other):
-        return -1
+        return PokerEvaluator.evaluate(self, other)
 
 class Deck():
     def __init__(self):
