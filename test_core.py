@@ -188,5 +188,11 @@ def test_two_pairs_category():
     two_pairs = Hand([Card('A♠'), Card('A♥'), Card('3♠'), Card('3♥')])
     eq_(TWO_PAIRS, PokerEvaluator.category(two_pairs))
 
+def test_three_of_kind_category():
+    three_of_kind = Hand([Card('A♠'), Card('A♥'), Card('9♠'), Card('A♦')])
+    eq_(THREE_OF_KIND, PokerEvaluator.category(three_of_kind))
+
+
+
 # TODO add test to construct all possible Product(Cards)
 

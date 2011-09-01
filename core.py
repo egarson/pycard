@@ -79,6 +79,8 @@ class PokerEvaluator():
         elif high_card_count == 2:
             # return the count of pairs, which coincides with category value
             return reduce(lambda x,y: x+1 if y==2 else x, card_count_map.values(), 0)
+        elif high_card_count == 3:
+            return THREE_OF_KIND
 
 class Hand():
     def __init__(self, cards):
