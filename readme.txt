@@ -10,3 +10,4 @@ deal() calls shuffle() so clients don't have to (or even to know that they 'must
 deal() cheats in terms of actual dealing convention/etiquette/rules, but i allow it
 clients can dynamically rebind evaluate to adjust for game semantics; PokerEvaluator can also be subclassed
 hit up irc for unicode printing annoyance
+assuming a valid Hand has 5 cards

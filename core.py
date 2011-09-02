@@ -73,14 +73,18 @@ class PokerEvaluator():
     def category(self, hand):
         # eg {ACE:2, 4:1} = Counter([A♠ 4♦ A♥])
         card_count_map = Counter([card.rank for card in hand.cards])
+        card_count_map.keys().sort()
         card_with_highest_count = max(card_count_map, key=lambda e: card_count_map[e])
         high_card_count = card_count_map[card_with_highest_count]
-        if high_card_count == 1:
-            return HIGH_CARDS
-        elif high_card_count == 2:
+        if high_card_count == 1: # can only be HIGH_CARDS, STRAIGHT, FLUSH or STRAIGHT_FLUSH
+            # eg [2,2,2,2,2] = [2,3,4,5,6] - [0,1,2,3,4]
+            diffs = map(lambda k,r: k-r, card_count_map.keys(), range(0,len(hand)))
+            # we have a straight if all diffs are the same 8-) as above
+            return STRAIGHT if all(d == diffs[0] for d in diffs) else HIGH_CARDS
+        elif high_card_count == 2: # can only be ONE_ or TWO_ pairs
             # return ONE_ or TWO_ pairs, the count of which coincides with category value
             return reduce(lambda x,y: x+1 if y==2 else x, card_count_map.values(), 0)
-        elif high_card_count == 3:
+        elif high_card_count == 3: # can only be THREE_OF_KIND or FULL_HOUSE
             return THREE_OF_KIND
         elif high_card_count == 4:
             return FOUR_OF_KIND

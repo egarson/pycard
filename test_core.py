@@ -179,7 +179,8 @@ def test_highest_count():
     eq_(10, card_count_map[4]) # sanity check, get value from 'retrieved' key
 
 def test_high_cards_category():
-    eq_(HIGH_CARDS, PokerEvaluator.category(Hand([Card('3♠'), Card('4♥')])))
+    high_cards = Hand([Card('A♠'), Card('6♥'), Card('4♣'), Card('3♦'), Card('9♦')])
+    eq_(HIGH_CARDS, PokerEvaluator.category(high_cards))
 
 def test_one_pair_category():
     eq_(ONE_PAIR, PokerEvaluator.category(Hand([Card('A♠'), Card('A♥')])))
@@ -195,6 +196,11 @@ def test_three_of_kind_category():
 def test_four_of_kind_category():
     four_of_kind = Hand([Card('A♠'), Card('A♥'), Card('A♣'), Card('A♦')])
     eq_(FOUR_OF_KIND, PokerEvaluator.category(four_of_kind))
+
+def test_straight_category():
+    # nb straight has 5 contiguous vals eg 45678, this hand is not sorted
+    straight = Hand([Card('3♠'), Card('2♥'), Card('5♣'), Card('4♦'), Card('6♥')])
+    eq_(STRAIGHT, PokerEvaluator.category(straight))
 
 # TODO add test to construct all possible Product(Cards)
 
