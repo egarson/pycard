@@ -176,7 +176,7 @@ def test_create_hand_with_new_card_constructor():
 def test_highest_count():
     card_count_map = {4:10, 5:8}
     eq_(4, max(card_count_map, key=lambda e: card_count_map[e]))
-    eq_(10, card_count_map[4]) # sanity check, get value from 'retrieved' key
+    eq_(10, card_count_map[4]) # sanity check
 
 def test_high_cards_category():
     high_cards = Hand([Card('A♠'), Card('6♥'), Card('4♣'), Card('3♦'), Card('9♦')])
@@ -202,5 +202,14 @@ def test_straight_category():
     straight = Hand([Card('3♠'), Card('2♥'), Card('5♣'), Card('4♦'), Card('6♥')])
     eq_(STRAIGHT, PokerEvaluator.category(straight))
 
-# TODO add test to construct all possible Product(Cards)
+def test_flush_category():
+    # flush is all same suit
+    flush = Hand([Card('4♠'), Card('2♠'), Card('10♠'), Card('9♠'), Card('6♠')])
+    eq_(FLUSH, PokerEvaluator.category(flush))
 
+def test_straight_flush_category():
+    # straight flush is 5 contiguous vals all same suit
+    straight_flush = Hand([Card('4♠'), Card('2♠'), Card('3♠'), Card('5♠'), Card('6♠')])
+    eq_(STRAIGHT_FLUSH, PokerEvaluator.category(straight_flush))
+
+# TODO add test to construct all possible Product(Cards)

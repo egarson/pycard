@@ -60,8 +60,8 @@ class Card():
             return 1 if self.rank > other.rank else -1
         return 0
 
-HIGH_CARDS, ONE_PAIR, TWO_PAIRS, THREE_OF_KIND, STRAIGHT, \
-FLUSH, FULL_HOUSE, FOUR_OF_KIND, STRAIGHT_FLUSH = 0, 1, 2, 3, 4, 5, 6, 7, 8
+HIGH_CARDS, ONE_PAIR, TWO_PAIRS, THREE_OF_KIND, STRAIGHT = 0, 1, 2, 3, 4
+FLUSH, FULL_HOUSE, FOUR_OF_KIND, STRAIGHT_FLUSH = 5, 6, 7, 8
 
 class PokerEvaluator():
 
@@ -78,11 +78,15 @@ class PokerEvaluator():
         high_card_count = card_count_map[card_with_highest_count]
         if high_card_count == 1: # can only be HIGH_CARDS, STRAIGHT, FLUSH or STRAIGHT_FLUSH
             # eg [2,2,2,2,2] = [2,3,4,5,6] - [0,1,2,3,4]
-            diffs = map(lambda k,r: k-r, card_count_map.keys(), range(0,len(hand)))
-            # we have a straight if all diffs are the same 8-) as above
-            return STRAIGHT if all(d == diffs[0] for d in diffs) else HIGH_CARDS
+            rank_diffs = map(lambda k,r: k-r, card_count_map.keys(), range(0,len(hand)))
+            contiguous = all(diff == rank_diffs[0] for diff in rank_diffs)
+            all_same_suit = all(card.suit == hand[0].suit for card in hand.cards)
+            if contiguous: # STRAIGHT or STRAIGHT_FLUSH if all same diffs
+                return STRAIGHT if not all_same_suit else STRAIGHT_FLUSH
+            else:
+                return FLUSH if all_same_suit else HIGH_CARDS
         elif high_card_count == 2: # can only be ONE_ or TWO_ pairs
-            # return ONE_ or TWO_ pairs, the count of which coincides with category value
+            # automagically return ONE_ or TWO_ pairs as count coincides with category value
             return reduce(lambda x,y: x+1 if y==2 else x, card_count_map.values(), 0)
         elif high_card_count == 3: # can only be THREE_OF_KIND or FULL_HOUSE
             return THREE_OF_KIND
