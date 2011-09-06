@@ -193,10 +193,6 @@ def test_three_of_kind_category():
     three_of_kind = Hand([Card('A♠'), Card('A♥'), Card('9♠'), Card('A♦')])
     eq_(THREE_OF_KIND, PokerEvaluator.category(three_of_kind))
 
-def test_four_of_kind_category():
-    four_of_kind = Hand([Card('A♠'), Card('A♥'), Card('A♣'), Card('A♦')])
-    eq_(FOUR_OF_KIND, PokerEvaluator.category(four_of_kind))
-
 def test_straight_category():
     # nb straight has 5 contiguous vals eg 45678, this hand is not sorted
     straight = Hand([Card('3♠'), Card('2♥'), Card('5♣'), Card('4♦'), Card('6♥')])
@@ -206,6 +202,15 @@ def test_flush_category():
     # flush is all same suit
     flush = Hand([Card('4♠'), Card('2♠'), Card('10♠'), Card('9♠'), Card('6♠')])
     eq_(FLUSH, PokerEvaluator.category(flush))
+
+def test_full_house_category():
+    # full house == three_of_kind + one_pair
+    full_house = Hand([Card('A♠'), Card('9♥'), Card('A♥'), Card('A♣'), Card('9♣')])
+    eq_(FULL_HOUSE, PokerEvaluator.category(full_house))
+
+def test_four_of_kind_category():
+    four_of_kind = Hand([Card('A♠'), Card('A♥'), Card('9♥'), Card('A♣'), Card('A♦')])
+    eq_(FOUR_OF_KIND, PokerEvaluator.category(four_of_kind))
 
 def test_straight_flush_category():
     # straight flush is 5 contiguous vals all same suit

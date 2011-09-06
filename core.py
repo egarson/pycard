@@ -79,9 +79,9 @@ class PokerEvaluator():
         if high_card_count == 1: # can only be HIGH_CARDS, STRAIGHT, FLUSH or STRAIGHT_FLUSH
             # eg [2,2,2,2,2] = [2,3,4,5,6] - [0,1,2,3,4]
             rank_diffs = map(lambda k,r: k-r, card_count_map.keys(), range(0,len(hand)))
-            contiguous = all(diff == rank_diffs[0] for diff in rank_diffs)
+            contiguous_values = all(diff == rank_diffs[0] for diff in rank_diffs)
             all_same_suit = all(card.suit == hand[0].suit for card in hand.cards)
-            if contiguous: # STRAIGHT or STRAIGHT_FLUSH if all same diffs
+            if contiguous_values: # STRAIGHT or STRAIGHT_FLUSH if all same diffs
                 return STRAIGHT if not all_same_suit else STRAIGHT_FLUSH
             else:
                 return FLUSH if all_same_suit else HIGH_CARDS
@@ -89,7 +89,8 @@ class PokerEvaluator():
             # automagically return ONE_ or TWO_ pairs as count coincides with category value
             return reduce(lambda x,y: x+1 if y==2 else x, card_count_map.values(), 0)
         elif high_card_count == 3: # can only be THREE_OF_KIND or FULL_HOUSE
-            return THREE_OF_KIND
+            has_no_pair = all(val != 2 for val in card_count_map.values())
+            return THREE_OF_KIND if has_no_pair else FULL_HOUSE
         elif high_card_count == 4:
             return FOUR_OF_KIND
 
