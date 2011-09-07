@@ -139,17 +139,23 @@ def test_take_two():
     ok_(50, len(d.cards))
     eq_(top_card, taken[0])
 
+# TODO test raise DeckException on d.take(53)
+
 def test_deal():
     d = Deck()
     original_cards = list(d.cards)
-    hands = d.deal(hands=5,cards=5)
-    ok_(len(hands) == 5)
-    eq_(52 - 5 * 5, len(d.cards))
+    hands = d.deal(hands=4,cards=5)
+    eq_(4, len(hands))
+    eq_(5, len(hands[0])) # each of 5 cards
+    eq_(5, len(hands[0].cards)) # explicit access
+    eq_(len(original_cards) - 4 * 5, len(d.cards))
 
 def test_deal_no_shuffle():
     d = Deck()
     [hand] = d.deal(1,1,shuffle=False)
-    eq_(hand[0], Card('Ace','Clubs'))
+    ok_(type(hand) == Hand)
+    ok_(type(hand[0]) == Card)
+    eq_(hand[0], Card('Ace', 'Clubs'))
     eq_(d.top_card(), Card('Ace', 'Diamonds'))
 
 def test_hand_str():
@@ -161,7 +167,7 @@ def test_hand_unicode():
     d = Deck()
     [hand] = d.deal(1,4,shuffle=False)
     u1 = unicode(hand)
-    u2 = u"[A♣, A♦, A♥, A♠]"
+    u2 = u"[A♣ A♦ A♥ A♠]"
     eq_(u1, u2)
 
 def test_hand_len():
@@ -170,8 +176,16 @@ def test_hand_len():
     eq_(4, len(hand))
 
 def test_create_hand_with_new_card_constructor():
-    hand = Hand([Card('A♠'), Card('A♦'), Card('A♥')])
+    hand = Hand(Card('A♠'), Card('A♦'), Card('A♥'))
     eq_(3, len(hand))
+
+@raises(HandException)
+def test_empty_hand():
+    Hand()
+
+@raises(HandException)
+def test_bad_poker_hand_length():
+    PokerHand(Card('2♣'))
 
 def test_highest_count():
     card_count_map = {4:10, 5:8}
@@ -179,42 +193,42 @@ def test_highest_count():
     eq_(10, card_count_map[4]) # sanity check
 
 def test_high_cards_category():
-    high_cards = Hand([Card('A♠'), Card('6♥'), Card('4♣'), Card('3♦'), Card('9♦')])
+    high_cards = PokerHand(Card('A♠'), Card('6♥'), Card('4♣'), Card('3♦'), Card('9♦'))
     eq_(HIGH_CARDS, PokerEvaluator.category(high_cards))
 
 def test_one_pair_category():
-    eq_(ONE_PAIR, PokerEvaluator.category(Hand([Card('A♠'), Card('A♥')])))
+    eq_(ONE_PAIR, PokerEvaluator.category(Hand(Card('A♠'), Card('A♥'))))
 
 def test_two_pairs_category():
-    two_pairs = Hand([Card('A♠'), Card('A♥'), Card('3♠'), Card('3♥')])
+    two_pairs = PokerHand(Card('A♠'), Card('A♥'), Card('3♠'), Card('3♣'), Card('7♥'))
     eq_(TWO_PAIRS, PokerEvaluator.category(two_pairs))
 
 def test_three_of_kind_category():
-    three_of_kind = Hand([Card('A♠'), Card('A♥'), Card('9♠'), Card('A♦')])
+    three_of_kind = PokerHand(Card('A♠'), Card('A♥'), Card('9♠'), Card('A♦'), Card('2♣'))
     eq_(THREE_OF_KIND, PokerEvaluator.category(three_of_kind))
 
 def test_straight_category():
     # nb straight has 5 contiguous vals eg 45678, this hand is not sorted
-    straight = Hand([Card('3♠'), Card('2♥'), Card('5♣'), Card('4♦'), Card('6♥')])
+    straight = PokerHand(Card('3♠'), Card('2♥'), Card('5♣'), Card('4♦'), Card('6♥'))
     eq_(STRAIGHT, PokerEvaluator.category(straight))
 
 def test_flush_category():
     # flush is all same suit
-    flush = Hand([Card('4♠'), Card('2♠'), Card('10♠'), Card('9♠'), Card('6♠')])
+    flush = PokerHand(Card('4♠'), Card('2♠'), Card('10♠'), Card('9♠'), Card('6♠'))
     eq_(FLUSH, PokerEvaluator.category(flush))
 
 def test_full_house_category():
     # full house == three_of_kind + one_pair
-    full_house = Hand([Card('A♠'), Card('9♥'), Card('A♥'), Card('A♣'), Card('9♣')])
+    full_house = PokerHand(Card('A♠'), Card('9♥'), Card('A♥'), Card('A♣'), Card('9♣'))
     eq_(FULL_HOUSE, PokerEvaluator.category(full_house))
 
 def test_four_of_kind_category():
-    four_of_kind = Hand([Card('A♠'), Card('A♥'), Card('9♥'), Card('A♣'), Card('A♦')])
+    four_of_kind = PokerHand(Card('A♠'), Card('A♥'), Card('9♥'), Card('A♣'), Card('A♦'))
     eq_(FOUR_OF_KIND, PokerEvaluator.category(four_of_kind))
 
 def test_straight_flush_category():
     # straight flush is 5 contiguous vals all same suit
-    straight_flush = Hand([Card('4♠'), Card('2♠'), Card('3♠'), Card('5♠'), Card('6♠')])
+    straight_flush = PokerHand(Card('4♠'), Card('2♠'), Card('3♠'), Card('5♠'), Card('6♠'))
     eq_(STRAIGHT_FLUSH, PokerEvaluator.category(straight_flush))
 
 # TODO add test to construct all possible Product(Cards)

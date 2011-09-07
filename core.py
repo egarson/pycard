@@ -17,7 +17,7 @@ suits_symbols = [u'♣', u'♦', u'♥', u'♠']
 
 class CardException(Exception): pass
 
-class Card():
+class Card(object):
     def __init__(self, *args):
         if len(args) == 2: # eg Card('Ace', 'Spades')
             [rank, suit] = map(lambda a: unicode(a.strip(), 'utf8'), args)
@@ -72,7 +72,7 @@ class PokerEvaluator():
     @classmethod
     def category(self, hand):
         # eg {ACE:2, 4:1} = Counter([A♠ 4♦ A♥])
-        card_count_map = Counter([card.rank for card in hand.cards])
+        card_count_map = Counter(card.rank for card in hand.cards)
         card_count_map.keys().sort()
         card_with_highest_count = max(card_count_map, key=lambda e: card_count_map[e])
         high_card_count = card_count_map[card_with_highest_count]
@@ -94,22 +94,34 @@ class PokerEvaluator():
         elif high_card_count == 4:
             return FOUR_OF_KIND
 
-class Hand():
-    def __init__(self, cards):
-        self.cards = cards
+class HandException(Exception): pass
 
-    def __getitem__(self,index):
+class Hand(object):
+    def __init__(self, *data):
+        if len(data) == 0:
+            raise HandException('Hand must contain at least one Card')
+        # variadic params are tuple wrapped; lists are passed in as first tuple element,
+        # for example in Deck.deal, which passes in the list from Deck.take
+        self.cards = data[0] if isinstance(data[0], list) else list(data)
+
+    def __getitem__(self, index):
         return self.cards[index]
-
-    def __str__(self):
-        card_str = lambda c: '%s%s' % (Ranks[c.rank-1][:1], Suits[c.suit][:1])
-        return '[%s]' % " ".join(card_str(card) for card in self.cards)
 
     def __len__(self):
         return len(self.cards)
 
+    def __str__(self): # TODO promote lambda to Card member
+        card_str = lambda c: '%s%s' % (Ranks[c.rank-1][:1], Suits[c.suit][:1])
+        return '[%s]' % " ".join(card_str(card) for card in self.cards)
+
     def __unicode__(self):
-        return u"[%s]" % u", ".join(unicode(card) for card in self.cards)
+        return u"[%s]" % u" ".join(unicode(card) for card in self.cards)
+
+class PokerHand(Hand):
+    def __init__(self, *cards):
+        super(PokerHand, self).__init__(*cards)
+        if len(cards) != 5:
+            raise HandException('Poker hands have 5 cards')
 
     def __cmp__(self, other):
         return PokerEvaluator.evaluate(self, other)
@@ -131,8 +143,7 @@ class Deck():
         return self.cards[index]
 
     def take(self, count):
-        result = self.cards[:count]
-        self.cards[:count] = []
+        result, self.cards[:count] = self.cards[:count], []
         return result
 
     def deal(self, hands, cards, shuffle=True):
