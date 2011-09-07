@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from nose.tools import *
-from random import shuffle
+from random import shuffle,randrange
 from collections import Counter
 
 ACE, JACK, QUEEN, KING = 1, 11, 12, 13 # sic
@@ -44,10 +44,13 @@ class Card(object):
     def parse_suit(self, suit):
         return self.__parse__(suit, Suits, SUITS, suits_symbols)
 
-    def __str__(self):
+    def short_str(self): # eg '7D'
+        return '%s%s' % (Ranks[self.rank-1][:1], Suits[self.suit][:1])
+
+    def __str__(self): # eg 'Seven of Diamonds'
         return '%s of %s' % (Ranks[self.rank-1], Suits[self.suit])
 
-    def __unicode__(self):
+    def __unicode__(self): # eg '7♦'
         return u"%s%s" % (ranks_chars[self.rank-1], suits_symbols[self.suit])
 
     def __hash__(self):
@@ -110,9 +113,8 @@ class Hand(object):
     def __len__(self):
         return len(self.cards)
 
-    def __str__(self): # TODO promote lambda to Card member
-        card_str = lambda c: '%s%s' % (Ranks[c.rank-1][:1], Suits[c.suit][:1])
-        return '[%s]' % " ".join(card_str(card) for card in self.cards)
+    def __str__(self):
+        return '[%s]' % " ".join(card.short_str() for card in self.cards)
 
     def __unicode__(self):
         return u"[%s]" % u" ".join(unicode(card) for card in self.cards)
@@ -152,3 +154,8 @@ class Deck():
 
     def shuffle(self):
         shuffle(self.cards)
+
+    def cut(self):
+        cut_index = randrange(1, len(self))
+        self.cards = self.cards[cut_index:] + self.cards[:cut_index]
+

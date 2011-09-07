@@ -139,6 +139,13 @@ def test_take_two():
     ok_(50, len(d.cards))
     eq_(top_card, taken[0])
 
+def test_cut_deck():
+    d = Deck()
+    top_card = d.top_card()
+    d.cut()
+    eq_(52, len(d.cards)) # sanity check
+    ok_(top_card != d.top_card())
+
 # TODO test raise DeckException on d.take(53)
 
 def test_deal():
