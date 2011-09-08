@@ -45,12 +45,14 @@ class Card(object):
         return self.__parse__(suit, Suits, SUITS, suits_symbols)
 
     def short_str(self): # eg '7D'
+        '''Returns a compact non-unicode representation of this Card'''
         return '%s%s' % (Ranks[self.rank-1][:1], Suits[self.suit][:1])
 
     def __str__(self): # eg 'Seven of Diamonds'
         return '%s of %s' % (Ranks[self.rank-1], Suits[self.suit])
 
     def __unicode__(self): # eg '7♦'
+        '''Returns a compact representation of this Card'''
         return u"%s%s" % (ranks_chars[self.rank-1], suits_symbols[self.suit])
 
     def __hash__(self):
@@ -74,6 +76,7 @@ class PokerEvaluator():
 
     @classmethod
     def category(self, hand):
+        # this simple algorithm is based on the highest number of occurrences of a given card in a hand
         # eg {ACE:2, 4:1} = Counter([A♠ 4♦ A♥])
         card_count_map = Counter(card.rank for card in hand.cards)
         card_count_map.keys().sort()
@@ -89,7 +92,7 @@ class PokerEvaluator():
             else:
                 return FLUSH if all_same_suit else HIGH_CARDS
         elif high_card_count == 2: # can only be ONE_ or TWO_ pairs
-            # automagically return ONE_ or TWO_ pairs as count coincides with category value
+            # automagically return ONE_ or TWO_ pairs: count coincides with category value
             return reduce(lambda x,y: x+1 if y==2 else x, card_count_map.values(), 0)
         elif high_card_count == 3: # can only be THREE_OF_KIND or FULL_HOUSE
             has_no_pair = all(val != 2 for val in card_count_map.values())
@@ -103,8 +106,7 @@ class Hand(object):
     def __init__(self, *data):
         if len(data) == 0:
             raise HandException('Hand must contain at least one Card')
-        # variadic params are tuple wrapped; lists are passed in as first tuple element,
-        # for example in Deck.deal, which passes in the list from Deck.take
+        # variadic params are tuple wrapped; lists are sent in first tuple element
         self.cards = data[0] if isinstance(data[0], list) else list(data)
 
     def __getitem__(self, index):
@@ -123,7 +125,7 @@ class PokerHand(Hand):
     def __init__(self, *cards):
         super(PokerHand, self).__init__(*cards)
         if len(cards) != 5:
-            raise HandException('Poker hands have 5 cards')
+            raise HandException('Poker hands require 5 cards') # do they?
 
     def __cmp__(self, other):
         return PokerEvaluator.evaluate(self, other)
@@ -145,12 +147,14 @@ class Deck():
         return self.cards[index]
 
     def take(self, count):
+        '''Return the top count cards (removed from the deck)'''
         result, self.cards[:count] = self.cards[:count], []
         return result
 
-    def deal(self, hands, cards, shuffle=True):
+    def deal(self, hands, cards, shuffle=True, hand=Hand):
+        '''Return a list of Hand objects with the given number of cards taken from this Deck'''
         self.shuffle() if shuffle else False # don't burden clients
-        return [Hand(self.take(cards)) for r in range(hands)]
+        return list(hand(self.take(cards)) for r in range(hands))
 
     def shuffle(self):
         shuffle(self.cards)
@@ -158,4 +162,3 @@ class Deck():
     def cut(self):
         cut_index = randrange(1, len(self))
         self.cards = self.cards[cut_index:] + self.cards[:cut_index]
-
