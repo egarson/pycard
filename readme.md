@@ -39,20 +39,10 @@ API usability is important to me, so I absorb some complexity in core.py in orde
 
 ## Sundry Comments
 
-* This code was developed on Ubuntu linux 2.6.38-11 using Python 2.7.1+ and git 1.7.4.1
-* I would be grateful to learn ways I might improve on this (albeit small) program should you have any suggestions
-* I have left quite a lot out of this short exercise and would be happy to expand further on any aspect thereof
+* This code was developed on Ubuntu linux 2.6.38-11 using Python 2.7.1+
 
 ## License
 
 Copyright (C) 2011 Edward Garson.
 
 This code is released under the terms of the MIT license as described by the included file MIT-LICENSE.txt.
-
-## Conclusion
-
-Thank you for your interest.
-
-Edward Garson
-
-September 2011
